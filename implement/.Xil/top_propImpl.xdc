@@ -1,5 +1,4 @@
-set_property SRC_FILE_INFO {cfile:/home/pedro/proj/bram_delay/implement/proj.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0.xdc rfile:../proj.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0.xdc id:1 order:EARLY scoped_inst:system_i/processing_system7_0/inst} [current_design]
-set_property SRC_FILE_INFO {cfile:/home/pedro/proj/bram_delay/source/top.xdc rfile:../../source/top.xdc id:2} [current_design]
+set_property SRC_FILE_INFO {cfile:/home/pedro/github/heater/implement/proj.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0.xdc rfile:../proj.srcs/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0.xdc id:1 order:EARLY scoped_inst:system_i/processing_system7_0/inst} [current_design]
 set_property src_info {type:SCOPED_XDC file:1 line:21 export:INPUT save:INPUT read:READ} [current_design]
 set_input_jitter clk_fpga_0 0.3
 set_property src_info {type:SCOPED_XDC file:1 line:31 export:INPUT save:INPUT read:READ} [current_design]
@@ -262,5 +261,3 @@ set_property src_info {type:SCOPED_XDC file:1 line:649 export:INPUT save:INPUT r
 set_property PACKAGE_PIN "B10" [get_ports "PS_SRSTB"]
 set_property src_info {type:SCOPED_XDC file:1 line:652 export:INPUT save:INPUT read:READ} [current_design]
 set_property PACKAGE_PIN "E7" [get_ports "PS_CLK"]
-set_property src_info {type:XDC file:2 line:1 export:INPUT save:INPUT read:READ} [current_design]
-create_clock -period 4.0 [get_ports clk]
