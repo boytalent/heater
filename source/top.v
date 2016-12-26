@@ -43,6 +43,7 @@ module top (
         bram_delay delay_inst(.clk(clk), .reset(0), .error(error[i]), .err_clear(err_clear[i]));
     end  endgenerate 
     
+    // the Zynq is here just to provide axiclk.
     system system_i(
         .DDR_addr(DDR_addr),
         .DDR_ba(DDR_ba),

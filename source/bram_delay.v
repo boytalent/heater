@@ -15,12 +15,15 @@ module bram_delay (
     // a BRAM delay
     logic [9:0] count;
     always_ff @ (posedge clk) if (reset==1) count<=0; else count++;
-    logic [31:0] bram_dout;
-    sp_bram sp_bram_inst(.clka(clk), .wea(1), .addra(count), .dina(srl_dout), .douta(bram_dout));
+    logic [3:0][31:0] bram_dout;
+    sp_bram sp_bram_0(.clka(clk), .wea(1), .addra(count), .dina(srl_dout),     .douta(bram_dout[0]));
+    sp_bram sp_bram_1(.clka(clk), .wea(1), .addra(count), .dina(bram_dout[0]), .douta(bram_dout[1]));
+    sp_bram sp_bram_2(.clka(clk), .wea(1), .addra(count), .dina(bram_dout[1]), .douta(bram_dout[2]));
+    sp_bram sp_bram_3(.clka(clk), .wea(1), .addra(count), .dina(bram_dout[2]), .douta(bram_dout[3]));
 
     // a DSP48 delay
     logic [47:0] dsp_dout;
-    dsp_nop dsp_nop_inst(.CLK(clk), .D(0), .C({16'd0, bram_dout}), .P(dsp_dout));
+    dsp_nop dsp_nop_inst(.CLK(clk), .D(0), .C({16'd0, bram_dout[3]}), .P(dsp_dout));
 
     // a couple of pipeline registers
     logic [31:0] ff_dout, ff_dout_reg;
