@@ -2,7 +2,7 @@
 // Multiple channels can be instantiated in order to scale power consumption.
 // An LFSR is used as the data source so the toggle rate is exactly 50%.  
 // A checker is at the end of the pipe to verify that the logic is running error free.
-module bram_delay (
+module heater (
     input   logic               clk,
     input   logic               reset,
     input   logic               err_clear,

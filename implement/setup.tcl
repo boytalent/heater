@@ -27,7 +27,7 @@ set_property synth_checkpoint_mode None [get_files ./proj.srcs/sources_1/bd/syst
 read_verilog -sv [glob ../source/lfsr.v]
 read_verilog -sv [glob ../source/lfsr_generator.v]
 read_verilog -sv [glob ../source/lfsr_checker.v]
-read_verilog -sv [glob ../source/bram_delay.v]
+read_verilog -sv [glob ../source/heater.v]
 read_verilog -sv [glob ../source/top.v]
 
 read_xdc ../source/top.xdc

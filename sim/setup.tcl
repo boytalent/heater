@@ -14,8 +14,8 @@ generate_target {simulation} [get_ips *]
 read_verilog -sv ../source/lfsr.v
 read_verilog -sv ../source/lfsr_generator.v
 read_verilog -sv ../source/lfsr_checker.v
-read_verilog -sv ../source/bram_delay.v
-read_verilog -sv ../source/bram_delay_tb.v
+read_verilog -sv ../source/heater.v
+read_verilog -sv ../source/heater_tb.v
 
 current_fileset -simset [ get_filesets simset ]
 

@@ -24,23 +24,13 @@ module top (
     localparam N = 32;
 
     logic axiclk;
-    //assign clk = axiclk;
     clk_wiz_0 instance_name (.clk_out200(clk), .clk_in100(axiclk)); 
-    //logic reset_reg, reset_regreg;
-    //always_ff @(posedge clk) reset_reg    <= reset;
-    //always_ff @(posedge clk) reset_regreg <= reset_reg;
-
-    //logic err_clear_reg, err_clear_regreg;
-    //always_ff @(posedge clk) err_clear_reg    <= err_clear;
-    //always_ff @(posedge clk) err_clear_regreg <= err_clear_reg;
-
-    //bram_delay delay_inst(.clk(clk), .reset(0), .error(error), .err_clear(err_clear_regreg));
 
     logic [N-1:0] error, err_clear;
 
     genvar i;  
     generate  for (i=0; i < N; i++) begin: gen_code_label  
-        bram_delay delay_inst(.clk(clk), .reset(0), .error(error[i]), .err_clear(err_clear[i]));
+        heater delay_inst(.clk(clk), .reset(0), .error(error[i]), .err_clear(err_clear[i]));
     end  endgenerate 
     
     // the Zynq is here just to provide axiclk.
