@@ -1,3 +1,4 @@
+// This block implements LFSR polynomials from Xilinx document XAPP052.
 module lfsr
 #(  parameter WIDTH = 16)
  (  input   logic   [WIDTH-1:0]   datain,
