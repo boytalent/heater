@@ -156,9 +156,30 @@ proc create_root_design { parentCell } {
   # Create interface ports
   set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
   set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
+  set GPIO0_out [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 GPIO0_out ]
+  set GPIO1_in [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 GPIO1_in ]
+  set GPIO1_out [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 GPIO1_out ]
 
   # Create ports
   set axiclk [ create_bd_port -dir O axiclk ]
+
+  # Create instance: axi_gpio_0, and set properties
+  set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
+  set_property -dict [ list \
+CONFIG.C_ALL_INPUTS_2 {1} \
+CONFIG.C_ALL_OUTPUTS {1} \
+CONFIG.C_ALL_OUTPUTS_2 {0} \
+CONFIG.C_IS_DUAL {0} \
+ ] $axi_gpio_0
+
+  # Create instance: axi_gpio_1, and set properties
+  set axi_gpio_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_1 ]
+  set_property -dict [ list \
+CONFIG.C_ALL_INPUTS_2 {1} \
+CONFIG.C_ALL_OUTPUTS {1} \
+CONFIG.C_ALL_OUTPUTS_2 {0} \
+CONFIG.C_IS_DUAL {1} \
+ ] $axi_gpio_1
 
   # Create instance: processing_system7_0, and set properties
   set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
@@ -403,7 +424,7 @@ CONFIG.PCW_MIO_28_DIRECTION {inout} \
 CONFIG.PCW_MIO_28_IOTYPE {LVCMOS 1.8V} \
 CONFIG.PCW_MIO_28_PULLUP {disabled} \
 CONFIG.PCW_MIO_28_SLEW {slow} \
-CONFIG.PCW_MIO_29_DIRECTION {in} \
+CONFIG.PCW_MIO_29_DIRECTION {inout} \
 CONFIG.PCW_MIO_29_IOTYPE {LVCMOS 1.8V} \
 CONFIG.PCW_MIO_29_PULLUP {disabled} \
 CONFIG.PCW_MIO_29_SLEW {slow} \
@@ -411,11 +432,11 @@ CONFIG.PCW_MIO_2_DIRECTION {inout} \
 CONFIG.PCW_MIO_2_IOTYPE {LVCMOS 3.3V} \
 CONFIG.PCW_MIO_2_PULLUP {disabled} \
 CONFIG.PCW_MIO_2_SLEW {slow} \
-CONFIG.PCW_MIO_30_DIRECTION {out} \
+CONFIG.PCW_MIO_30_DIRECTION {inout} \
 CONFIG.PCW_MIO_30_IOTYPE {LVCMOS 1.8V} \
 CONFIG.PCW_MIO_30_PULLUP {disabled} \
 CONFIG.PCW_MIO_30_SLEW {slow} \
-CONFIG.PCW_MIO_31_DIRECTION {in} \
+CONFIG.PCW_MIO_31_DIRECTION {inout} \
 CONFIG.PCW_MIO_31_IOTYPE {LVCMOS 1.8V} \
 CONFIG.PCW_MIO_31_PULLUP {disabled} \
 CONFIG.PCW_MIO_31_SLEW {slow} \
@@ -435,7 +456,7 @@ CONFIG.PCW_MIO_35_DIRECTION {inout} \
 CONFIG.PCW_MIO_35_IOTYPE {LVCMOS 1.8V} \
 CONFIG.PCW_MIO_35_PULLUP {disabled} \
 CONFIG.PCW_MIO_35_SLEW {slow} \
-CONFIG.PCW_MIO_36_DIRECTION {in} \
+CONFIG.PCW_MIO_36_DIRECTION {inout} \
 CONFIG.PCW_MIO_36_IOTYPE {LVCMOS 1.8V} \
 CONFIG.PCW_MIO_36_PULLUP {disabled} \
 CONFIG.PCW_MIO_36_SLEW {slow} \
@@ -795,8 +816,8 @@ CONFIG.PCW_UIPARAM_DDR_T_RP {7} \
 CONFIG.PCW_UIPARAM_DDR_USE_INTERNAL_VREF {1} \
 CONFIG.PCW_USB0_PERIPHERAL_ENABLE {0} \
 CONFIG.PCW_USB0_PERIPHERAL_FREQMHZ {60} \
-CONFIG.PCW_USB0_RESET_ENABLE {1} \
-CONFIG.PCW_USB0_RESET_IO {MIO 7} \
+CONFIG.PCW_USB0_RESET_ENABLE {0} \
+CONFIG.PCW_USB0_RESET_IO {<Select>} \
 CONFIG.PCW_USB0_USB0_IO {<Select>} \
 CONFIG.PCW_USB1_PERIPHERAL_ENABLE {0} \
 CONFIG.PCW_USB1_PERIPHERAL_FREQMHZ {60} \
@@ -807,7 +828,7 @@ CONFIG.PCW_USB_RESET_ENABLE {1} \
 CONFIG.PCW_USB_RESET_POLARITY {Active Low} \
 CONFIG.PCW_USB_RESET_SELECT {<Select>} \
 CONFIG.PCW_USE_CROSS_TRIGGER {0} \
-CONFIG.PCW_USE_M_AXI_GP0 {0} \
+CONFIG.PCW_USE_M_AXI_GP0 {1} \
 CONFIG.PCW_USE_M_AXI_GP1 {0} \
 CONFIG.PCW_USE_S_AXI_GP0 {0} \
 CONFIG.PCW_USE_S_AXI_HP0 {0} \
@@ -1255,27 +1276,105 @@ CONFIG.PCW_WDT_PERIPHERAL_FREQMHZ.VALUE_SRC {DEFAULT} \
 CONFIG.PCW_WDT_WDT_IO.VALUE_SRC {DEFAULT} \
  ] $processing_system7_0
 
+  # Create instance: ps7_0_axi_periph, and set properties
+  set ps7_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 ps7_0_axi_periph ]
+  set_property -dict [ list \
+CONFIG.NUM_MI {3} \
+ ] $ps7_0_axi_periph
+
+  # Create instance: rst_ps7_0_100M, and set properties
+  set rst_ps7_0_100M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_ps7_0_100M ]
+
+  # Create instance: xadc_wiz_0, and set properties
+  set xadc_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xadc_wiz:3.3 xadc_wiz_0 ]
+  set_property -dict [ list \
+CONFIG.ADC_CONVERSION_RATE {1000} \
+CONFIG.CHANNEL_AVERAGING {64} \
+CONFIG.CHANNEL_ENABLE_VP_VN {false} \
+CONFIG.DCLK_FREQUENCY {100} \
+CONFIG.ENABLE_RESET {false} \
+CONFIG.ENABLE_TEMP_BUS {false} \
+CONFIG.ENABLE_VCCDDRO_ALARM {false} \
+CONFIG.ENABLE_VCCPAUX_ALARM {false} \
+CONFIG.ENABLE_VCCPINT_ALARM {false} \
+CONFIG.EXTERNAL_MUX_CHANNEL {VP_VN} \
+CONFIG.INTERFACE_SELECTION {Enable_AXI} \
+CONFIG.OT_ALARM {false} \
+CONFIG.SEQUENCER_MODE {Off} \
+CONFIG.SINGLE_CHANNEL_SELECTION {TEMPERATURE} \
+CONFIG.USER_TEMP_ALARM {false} \
+CONFIG.VCCAUX_ALARM {false} \
+CONFIG.VCCDDRO_ALARM_LOWER {1.2} \
+CONFIG.VCCINT_ALARM {false} \
+CONFIG.XADC_STARUP_SELECTION {single_channel} \
+ ] $xadc_wiz_0
+
+  # Need to retain value_src of defaults
+  set_property -dict [ list \
+CONFIG.ADC_CONVERSION_RATE.VALUE_SRC {DEFAULT} \
+CONFIG.DCLK_FREQUENCY.VALUE_SRC {DEFAULT} \
+CONFIG.ENABLE_RESET.VALUE_SRC {DEFAULT} \
+CONFIG.INTERFACE_SELECTION.VALUE_SRC {DEFAULT} \
+CONFIG.VCCDDRO_ALARM_LOWER.VALUE_SRC {DEFAULT} \
+ ] $xadc_wiz_0
+
+  set_property -dict [ list \
+CONFIG.NUM_READ_OUTSTANDING {1} \
+CONFIG.NUM_WRITE_OUTSTANDING {1} \
+ ] [get_bd_intf_pins /xadc_wiz_0/s_axi_lite]
+
   # Create interface connections
+  connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports GPIO1_out] [get_bd_intf_pins axi_gpio_1/GPIO]
+  connect_bd_intf_net -intf_net axi_gpio_0_GPIO2 [get_bd_intf_ports GPIO1_in] [get_bd_intf_pins axi_gpio_1/GPIO2]
+  connect_bd_intf_net -intf_net axi_gpio_1_GPIO [get_bd_intf_ports GPIO0_out] [get_bd_intf_pins axi_gpio_0/GPIO]
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
+  connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins processing_system7_0/M_AXI_GP0] [get_bd_intf_pins ps7_0_axi_periph/S00_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M00_AXI [get_bd_intf_pins axi_gpio_0/S_AXI] [get_bd_intf_pins ps7_0_axi_periph/M00_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M01_AXI [get_bd_intf_pins axi_gpio_1/S_AXI] [get_bd_intf_pins ps7_0_axi_periph/M01_AXI]
+  connect_bd_intf_net -intf_net ps7_0_axi_periph_M02_AXI [get_bd_intf_pins ps7_0_axi_periph/M02_AXI] [get_bd_intf_pins xadc_wiz_0/s_axi_lite]
 
   # Create port connections
-  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports axiclk] [get_bd_pins processing_system7_0/FCLK_CLK0]
+  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports axiclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins ps7_0_axi_periph/ACLK] [get_bd_pins ps7_0_axi_periph/M00_ACLK] [get_bd_pins ps7_0_axi_periph/M01_ACLK] [get_bd_pins ps7_0_axi_periph/M02_ACLK] [get_bd_pins ps7_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps7_0_100M/slowest_sync_clk] [get_bd_pins xadc_wiz_0/s_axi_aclk]
+  connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_ps7_0_100M/ext_reset_in]
+  connect_bd_net -net rst_ps7_0_100M_interconnect_aresetn [get_bd_pins ps7_0_axi_periph/ARESETN] [get_bd_pins rst_ps7_0_100M/interconnect_aresetn]
+  connect_bd_net -net rst_ps7_0_100M_peripheral_aresetn [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins ps7_0_axi_periph/M00_ARESETN] [get_bd_pins ps7_0_axi_periph/M01_ARESETN] [get_bd_pins ps7_0_axi_periph/M02_ARESETN] [get_bd_pins ps7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_ps7_0_100M/peripheral_aresetn] [get_bd_pins xadc_wiz_0/s_axi_aresetn]
 
   # Create address segments
+  create_bd_addr_seg -range 0x00010000 -offset 0x40010000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] SEG_axi_gpio_0_Reg
+  create_bd_addr_seg -range 0x00010000 -offset 0x40000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] SEG_axi_gpio_1_Reg
+  create_bd_addr_seg -range 0x00010000 -offset 0x40020000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs xadc_wiz_0/s_axi_lite/Reg] SEG_xadc_wiz_0_Reg
 
   # Perform GUI Layout
   regenerate_bd_layout -layout_string {
    guistr: "# # String gsaved with Nlview 6.6.5b  2016-09-06 bk=1.3687 VDI=39 GEI=35 GUI=JA:1.6
 #  -string -flagsOSRD
-preplace port DDR -pg 1 -y 50 -defaultsOSRD
-preplace port FIXED_IO -pg 1 -y 70 -defaultsOSRD
-preplace port axiclk -pg 1 -y 150 -defaultsOSRD
-preplace inst processing_system7_0 -pg 1 -lvl 1 -y 110 -defaultsOSRD
-preplace netloc processing_system7_0_DDR 1 1 1 NJ
-preplace netloc processing_system7_0_FIXED_IO 1 1 1 NJ
-preplace netloc processing_system7_0_FCLK_CLK0 1 1 1 NJ
-levelinfo -pg 1 0 160 330 -top 0 -bot 220
+preplace port DDR -pg 1 -y 70 -defaultsOSRD
+preplace port GPIO0_out -pg 1 -y 200 -defaultsOSRD
+preplace port GPIO1_out -pg 1 -y 330 -defaultsOSRD
+preplace port GPIO1_in -pg 1 -y 350 -defaultsOSRD
+preplace port FIXED_IO -pg 1 -y 90 -defaultsOSRD
+preplace port axiclk -pg 1 -y 110 -defaultsOSRD
+preplace inst xadc_wiz_0 -pg 1 -lvl 3 -y 490 -defaultsOSRD
+preplace inst axi_gpio_0 -pg 1 -lvl 3 -y 200 -defaultsOSRD
+preplace inst axi_gpio_1 -pg 1 -lvl 3 -y 340 -defaultsOSRD
+preplace inst ps7_0_axi_periph -pg 1 -lvl 2 -y 270 -defaultsOSRD
+preplace inst rst_ps7_0_100M -pg 1 -lvl 1 -y 330 -defaultsOSRD
+preplace inst processing_system7_0 -pg 1 -lvl 1 -y 140 -defaultsOSRD
+preplace netloc ps7_0_axi_periph_M02_AXI 1 2 1 760
+preplace netloc processing_system7_0_DDR 1 1 3 NJ 70 NJ 70 NJ
+preplace netloc processing_system7_0_M_AXI_GP0 1 1 1 440
+preplace netloc rst_ps7_0_100M_peripheral_aresetn 1 1 2 460 430 790
+preplace netloc processing_system7_0_FCLK_RESET0_N 1 0 2 20 0 430
+preplace netloc ps7_0_axi_periph_M01_AXI 1 2 1 780
+preplace netloc axi_gpio_0_GPIO2 1 3 1 NJ
+preplace netloc processing_system7_0_FIXED_IO 1 1 3 NJ 90 NJ 90 NJ
+preplace netloc axi_gpio_0_GPIO 1 3 1 NJ
+preplace netloc processing_system7_0_FCLK_CLK0 1 0 4 30 20 450 20 770 20 1060J
+preplace netloc ps7_0_axi_periph_M00_AXI 1 2 1 760
+preplace netloc axi_gpio_1_GPIO 1 3 1 N
+preplace netloc rst_ps7_0_100M_interconnect_aresetn 1 1 1 440
+levelinfo -pg 1 0 230 620 930 1080 -top -110 -bot 590
 ",
 }
 

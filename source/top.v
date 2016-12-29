@@ -26,11 +26,11 @@ module top (
     logic axiclk;
     clk_wiz_0 instance_name (.clk_out200(clk), .clk_in100(axiclk)); 
 
-    logic [N-1:0] error, err_clear;
+    logic [N-1:0] heater_error, heater_err_clear, heater_enable;
 
     genvar i;  
     generate  for (i=0; i < N; i++) begin: gen_code_label  
-        heater delay_inst(.clk(clk), .reset(0), .error(error[i]), .err_clear(err_clear[i]));
+        heater heater_inst(.clk(clk), .enable(heater_enable[i]), .error(heater_error[i]), .err_clear(heater_err_clear[i]));
     end  endgenerate 
     
     // the Zynq is here just to provide axiclk.
@@ -56,10 +56,13 @@ module top (
         .FIXED_IO_ps_clk(FIXED_IO_ps_clk),
         .FIXED_IO_ps_porb(FIXED_IO_ps_porb),
         .FIXED_IO_ps_srstb(FIXED_IO_ps_srstb),
-        .axiclk(axiclk)
+        .axiclk(axiclk),        
+        .GPIO0_out_tri_o(heater_enable),
+        .GPIO1_in_tri_i(heater_error),
+        .GPIO1_out_tri_o(heater_err_clear)
     );
 
-    vio_0 vio_inst (.clk(clk), .probe_in0(error), .probe_out0(err_clear) );
+    //vio_0 vio_inst (.clk(clk), .probe_in0(error), .probe_out0(err_clear) );
 
 endmodule
 

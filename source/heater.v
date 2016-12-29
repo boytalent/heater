@@ -4,9 +4,13 @@
 // A checker is at the end of the pipe to verify that the logic is running error free.
 module heater (
     input   logic               clk,
-    input   logic               reset,
+    input   logic               enable,
     input   logic               err_clear,
     output  logic               error);
+    
+    logic  reset, reset_pre;
+    always_ff @(posedge clk) reset_pre <= ~enable;
+    always_ff @(posedge clk) reset <= reset_pre;
     
     // an lfsr data source
     logic [31:0] lfsr_dout;    
