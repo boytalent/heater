@@ -1,12 +1,6 @@
-/** @file */  // This line is to make doxygen happy.
-/* **********************
-This file should document the register map for the MAX2580 RF Prototype Board.
-We will try to use Doxygen compatible comments wherever possible.
-************************** */
-
 /// Base address of all FPGA peripherals.
-#define		PROTO_BASE_ADDRESS	0x40000000
-#define		PROTO_SIZE		    0x00030000
+#define		PROTO_BASE_ADDRESS      0x40000000
+#define		PROTO_SIZE              0x00030000
 
 /// This is a temporary Block RAM provided to support software development.
 /// It is a safe place to direct reads and writes because it does nothing!

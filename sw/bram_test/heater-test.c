@@ -6,12 +6,11 @@
 #include <fcntl.h>
 #include <string.h>
 
-#include "common-bit-set.h"
-#include "utils.h"
-#include "mem-io.h"
+#include "axi_hw.h"
+#include "phy_2_vir_addr.h"
 
-#define TEST_BRAM_RANGE 0x1000
 /*
+#define TEST_BRAM_RANGE 0x1000
 void test_bram()
 {
     uint32_t tmp_val;
@@ -38,14 +37,14 @@ int main(int argc, char** argv)
 {
     uint32_t *axi_addr;
 
-    axi_addr=phy_addr_2_vir_addr(PROTO_BASE_ADDR, PROTO_RANGE);
+    axi_addr=phy_addr_2_vir_addr(PROTO_BASE_ADDRESS, PROTO_SIZE);
     if(axi_addr==NULL) {
-       fprintf(stderr,"can't mmap phy_addr 0x%08x with size 0x%08x to viraddr\n", PROTO_BASE_ADDR, PROTO_RANGE);
+       fprintf(stderr,"can't mmap phy_addr 0x%08x with size 0x%08x to viraddr\n", PROTO_BASE_ADDRESS, PROTO_SIZE);
        exit(3);
     }
 
 
-    munmap(axi_addr,PROTO_RANGE);
+    munmap(axi_addr,PROTO_SIZE);
 
     return 0;
 }

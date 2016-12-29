@@ -2,11 +2,10 @@ ALL_EXE = heater-test
 all: $(ALL_EXE) 
 
 CC=gcc
-CFLAGS=-I. -I../include -I../API
+CFLAGS=-I. -I../util
 DEPS = Makefile
 
-#PUBLIC_LIBS = ../API/mem-io.o 
-PUBLIC_LIBS =
+PUBLIC_LIBS = ../util/phy_2_vir_addr.o
 LIB_FILES =
 LIB_OBJS := $(subst .c,.o,$(LIB_FILES))
 

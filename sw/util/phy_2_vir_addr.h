@@ -22,7 +22,7 @@ void virtual_mem_range_read(uint8_t* dst,uint8_t* virtual_address,uint32_t regis
 #define poke_fpga               virtual_mem_write
 #define peek_fpga               virtual_mem_read
 
-void load_ram(void* fpga_address,ram_name_t ram_name,void* src,int count);
-void read_ram(void* fpga_address,ram_name_t ram_name,void* dst,int count);
+//void load_ram(void* fpga_address,ram_name_t ram_name,void* src,int count);
+//void read_ram(void* fpga_address,ram_name_t ram_name,void* dst,int count);
 
 #endif// __PHY_2_VIR_ADDR_H__
