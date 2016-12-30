@@ -166,7 +166,7 @@ proc create_root_design { parentCell } {
   # Create instance: axi_gpio_0, and set properties
   set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
   set_property -dict [ list \
-CONFIG.C_ALL_INPUTS_2 {1} \
+CONFIG.C_ALL_INPUTS_2 {0} \
 CONFIG.C_ALL_OUTPUTS {1} \
 CONFIG.C_ALL_OUTPUTS_2 {0} \
 CONFIG.C_IS_DUAL {0} \
@@ -1289,7 +1289,11 @@ CONFIG.NUM_MI {3} \
   set xadc_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xadc_wiz:3.3 xadc_wiz_0 ]
   set_property -dict [ list \
 CONFIG.ADC_CONVERSION_RATE {1000} \
-CONFIG.CHANNEL_AVERAGING {64} \
+CONFIG.CHANNEL_AVERAGING {16} \
+CONFIG.CHANNEL_ENABLE_TEMPERATURE {true} \
+CONFIG.CHANNEL_ENABLE_VBRAM {true} \
+CONFIG.CHANNEL_ENABLE_VCCAUX {true} \
+CONFIG.CHANNEL_ENABLE_VCCINT {true} \
 CONFIG.CHANNEL_ENABLE_VP_VN {false} \
 CONFIG.DCLK_FREQUENCY {100} \
 CONFIG.ENABLE_RESET {false} \
@@ -1300,13 +1304,13 @@ CONFIG.ENABLE_VCCPINT_ALARM {false} \
 CONFIG.EXTERNAL_MUX_CHANNEL {VP_VN} \
 CONFIG.INTERFACE_SELECTION {Enable_AXI} \
 CONFIG.OT_ALARM {false} \
-CONFIG.SEQUENCER_MODE {Off} \
+CONFIG.SEQUENCER_MODE {Continuous} \
 CONFIG.SINGLE_CHANNEL_SELECTION {TEMPERATURE} \
 CONFIG.USER_TEMP_ALARM {false} \
 CONFIG.VCCAUX_ALARM {false} \
 CONFIG.VCCDDRO_ALARM_LOWER {1.2} \
 CONFIG.VCCINT_ALARM {false} \
-CONFIG.XADC_STARUP_SELECTION {single_channel} \
+CONFIG.XADC_STARUP_SELECTION {channel_sequencer} \
  ] $xadc_wiz_0
 
   # Need to retain value_src of defaults
@@ -1317,11 +1321,6 @@ CONFIG.ENABLE_RESET.VALUE_SRC {DEFAULT} \
 CONFIG.INTERFACE_SELECTION.VALUE_SRC {DEFAULT} \
 CONFIG.VCCDDRO_ALARM_LOWER.VALUE_SRC {DEFAULT} \
  ] $xadc_wiz_0
-
-  set_property -dict [ list \
-CONFIG.NUM_READ_OUTSTANDING {1} \
-CONFIG.NUM_WRITE_OUTSTANDING {1} \
- ] [get_bd_intf_pins /xadc_wiz_0/s_axi_lite]
 
   # Create interface connections
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports GPIO1_out] [get_bd_intf_pins axi_gpio_1/GPIO]
@@ -1361,8 +1360,8 @@ preplace inst axi_gpio_1 -pg 1 -lvl 3 -y 340 -defaultsOSRD
 preplace inst ps7_0_axi_periph -pg 1 -lvl 2 -y 270 -defaultsOSRD
 preplace inst rst_ps7_0_100M -pg 1 -lvl 1 -y 330 -defaultsOSRD
 preplace inst processing_system7_0 -pg 1 -lvl 1 -y 140 -defaultsOSRD
-preplace netloc ps7_0_axi_periph_M02_AXI 1 2 1 760
 preplace netloc processing_system7_0_DDR 1 1 3 NJ 70 NJ 70 NJ
+preplace netloc ps7_0_axi_periph_M02_AXI 1 2 1 760
 preplace netloc processing_system7_0_M_AXI_GP0 1 1 1 440
 preplace netloc rst_ps7_0_100M_peripheral_aresetn 1 1 2 460 430 790
 preplace netloc processing_system7_0_FCLK_RESET0_N 1 0 2 20 0 430
@@ -1371,8 +1370,8 @@ preplace netloc axi_gpio_0_GPIO2 1 3 1 NJ
 preplace netloc processing_system7_0_FIXED_IO 1 1 3 NJ 90 NJ 90 NJ
 preplace netloc axi_gpio_0_GPIO 1 3 1 NJ
 preplace netloc processing_system7_0_FCLK_CLK0 1 0 4 30 20 450 20 770 20 1060J
-preplace netloc ps7_0_axi_periph_M00_AXI 1 2 1 760
 preplace netloc axi_gpio_1_GPIO 1 3 1 N
+preplace netloc ps7_0_axi_periph_M00_AXI 1 2 1 760
 preplace netloc rst_ps7_0_100M_interconnect_aresetn 1 1 1 440
 levelinfo -pg 1 0 230 620 930 1080 -top -110 -bot 590
 ",
