@@ -25,24 +25,28 @@ int main(int argc,char** argv)
     }
    fprintf(stdout,"phy_addr 0x%08x with size 0x%08x to viraddr 0x%08x.\n",pcie_bar0_addr,pcie_bar0_size, (uint32_t)pcie_addr);
 
-    write_reg(pcie_addr,GPIO0_DATA, 1); // enable the channels
+    uint32_t chan_enable = 0x00000000;
+    printf("chan_enable = 0x%08X\n", chan_enable);
+    write_reg(pcie_addr,GPIO0_DATA, chan_enable); // enable the channels
+    usleep(100);
+
     write_reg(pcie_addr,GPIO1_DATA, 0xffffffff); // clear the errors
     write_reg(pcie_addr,GPIO1_DATA, 0x00000000); // clear the errors
     uint32_t read_val;
     read_val = read_reg(pcie_addr,GPIO1_DATA2);
-    printf("read_val = 0x%08X\n", read_val);
+    printf("errors = 0x%08X\n", read_val);
 
     read_val = read_reg(pcie_addr,XADC_TEMP);
-    printf("temperature = %d, %f degrees C\n", read_val, read_val*503.975/(16.0*4096.0)-273.15);
+    printf("temperature = 0x%08X, %f degrees C\n", read_val, (read_val*503.975/(16.0*4096.0))-273.15);
 
     read_val = read_reg(pcie_addr,XADC_VCCINT);
-    printf("VCCint = 0x%08X\n", read_val);
+    printf("VCCint = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
 
     read_val = read_reg(pcie_addr,XADC_VCCAUX);
-    printf("VCCaux = 0x%08X\n", read_val);
+    printf("VCCaux = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
 
     read_val = read_reg(pcie_addr,XADC_VCCBRAM);
-    printf("VCCbram = 0x%08X\n", read_val);
+    printf("VCCbram = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
 
     munmap(pcie_addr,pcie_bar0_size);
 
