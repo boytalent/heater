@@ -1289,7 +1289,7 @@ CONFIG.NUM_MI {3} \
   set xadc_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xadc_wiz:3.3 xadc_wiz_0 ]
   set_property -dict [ list \
 CONFIG.ADC_CONVERSION_RATE {1000} \
-CONFIG.CHANNEL_AVERAGING {16} \
+CONFIG.CHANNEL_AVERAGING {None} \
 CONFIG.CHANNEL_ENABLE_TEMPERATURE {true} \
 CONFIG.CHANNEL_ENABLE_VBRAM {true} \
 CONFIG.CHANNEL_ENABLE_VCCAUX {true} \
