@@ -16,7 +16,7 @@ synth_ip [get_ips $list3]
 synth_design -top top
 write_checkpoint -force $outputDir/post_synth.dcp
 
-#source add_ila.tcl
+source add_ila.tcl
 write_debug_probes -force ./results/ila0.ltx
 
 opt_design
