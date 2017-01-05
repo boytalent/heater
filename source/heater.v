@@ -44,18 +44,24 @@ module heater (
     dsp_nop dsp_5(.CLK(clk), .D(0), .C({16'd0, dsp_dout[4]}),  .P(dsp_dout[5]));
 
     // some pipeline registers
-    logic [7:0][31:0] ff_dout;
+    localparam Npipe = 128;
+    logic [Npipe-1:0][31:0] ff_dout;
     always_ff @(posedge clk) ff_dout[0] <= dsp_dout[5][31:0];
-    always_ff @(posedge clk) ff_dout[1] <= ff_dout[0];
-    always_ff @(posedge clk) ff_dout[2] <= ff_dout[1];
-    always_ff @(posedge clk) ff_dout[3] <= ff_dout[2];
-    always_ff @(posedge clk) ff_dout[4] <= ff_dout[3];
-    always_ff @(posedge clk) ff_dout[5] <= ff_dout[4];
-    always_ff @(posedge clk) ff_dout[6] <= ff_dout[5];
-    always_ff @(posedge clk) ff_dout[7] <= ff_dout[6];
+    genvar i;  
+    generate  for (i=1; i<Npipe; i++) begin: gen_ff_pipe  
+        always_ff @(posedge clk) ff_dout[i] <= ff_dout[i-1];
+    end  endgenerate 
+    //always_ff @(posedge clk) ff_dout[0] <= dsp_dout[5][31:0];
+    //always_ff @(posedge clk) ff_dout[1] <= ff_dout[0];
+    //always_ff @(posedge clk) ff_dout[2] <= ff_dout[1];
+    //always_ff @(posedge clk) ff_dout[3] <= ff_dout[2];
+    //always_ff @(posedge clk) ff_dout[4] <= ff_dout[3];
+    //always_ff @(posedge clk) ff_dout[5] <= ff_dout[4];
+    //always_ff @(posedge clk) ff_dout[6] <= ff_dout[5];
+    //always_ff @(posedge clk) ff_dout[7] <= ff_dout[6];
     
     // an lsfr data checker
-    lfsr_checker lfsr_check_inst(.clk(clk), .reset(err_clear), .dv_in(1), .datain(ff_dout[7]), .error(error));
+    lfsr_checker lfsr_check_inst(.clk(clk), .reset(err_clear), .dv_in(1), .datain(ff_dout[Npipe-1]), .error(error));
 
 endmodule
 

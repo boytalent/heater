@@ -1,22 +1,13 @@
 # Script to compile the FPGA with zynq processor system all the way to bit file.
-close_project -quiet
 set outputDir ./results
 file mkdir $outputDir
 open_project proj.xpr
 
-set list1 [get_ips *];
-set list2 [get_ips system*];
-set list3 {};
-foreach core $list1 {if {[lsearch $list2 $core]==-1} { set list3 "$list3 $core" }};
-puts $list3;
-synth_ip [get_ips $list3]
-
-#synth_ip [get_ips *]
-
-synth_design -top top
+synth_design -top artix_top
 write_checkpoint -force $outputDir/post_synth.dcp
 
-source add_ila.tcl
+## add ila logic analyzer.
+#source add_ila.tcl
 write_debug_probes -force ./results/ila0.ltx
 
 opt_design
@@ -27,23 +18,24 @@ phys_opt_design
 
 route_design
 write_checkpoint -force $outputDir/post_route.dcp
-report_utilization -file $outputDir/post_route_util.rpt
 report_route_status -file $outputDir/post_route_status.rpt
 report_timing_summary -file $outputDir/post_route_timing_summary.rpt
 report_power -file $outputDir/post_route_power.rpt
+report_utilization -file $outputDir/post_route_util.rpt
 report_drc -file $outputDir/post_imp_drc.rpt
 report_io -file $outputDir/post_imp_io.rpt
 #xilinx::ultrafast::report_io_reg -verbose -file $outputDir/io_regs.rpt
 
-#write_hwdef -force  -file /home/pedro/proj/vivado_zynq/sdk/top.hdf
+set_property CFGBVS VCCO [current_design]
+set_property CONFIG_VOLTAGE 2.5 [current_design]
 
-write_bitstream -verbose -force $outputDir/top.bit
+set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]
+set_property BITSTREAM.Config.SPI_BUSWIDTH 4 [current_design]
+write_bitstream -verbose -force $outputDir/artix_top.bit
 
 close_project
 
-write_cfgmem -disablebitswap -force -format BIN -size 256 -interface SMAPx32 -loadbit "up 0x0 ./results/top.bit" -verbose ./results/top.bit.bin
-
-
+write_cfgmem -force -format MCS -size 256 -interface SPIx4 -loadbit "up 0x0 ./results/artix_top.bit" -verbose ./results/artix_top.mcs
 
 
 

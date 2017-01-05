@@ -2,7 +2,7 @@
 # These are the signal we want to see in the ILA
 #
 #set ila_clock clk_BUFG
-set ila_clock clk
+set ila_clock axiclk
 #
 set_property mark_debug true [ get_nets {gen_code_label[*].heater_inst/lfsr_dout[3] gen_code_label[*].heater_inst/lfsr_dout[2] gen_code_label[*].heater_inst/lfsr_dout[1] gen_code_label[*].heater_inst/lfsr_dout[0]}]
 #
