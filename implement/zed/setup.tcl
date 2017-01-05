@@ -12,25 +12,25 @@ tclapp::install ultrafast -quiet
 file delete -force ./ip
 file mkdir ./ip
 
-read_ip ../source/clk_wiz_0/clk_wiz_0.xci
-read_ip ../source/vio_0/vio_0.xci
-read_ip ../source/dsp_nop/dsp_nop.xci
-read_ip ../source/sp_bram/sp_bram.xci
-read_ip ../source/srl32/srl32.xci
+read_ip ../../source/clk_wiz_0/clk_wiz_0.xci
+read_ip ../../source/vio_0/vio_0.xci
+read_ip ../../source/dsp_nop/dsp_nop.xci
+read_ip ../../source/sp_bram/sp_bram.xci
+read_ip ../../source/srl32/srl32.xci
 upgrade_ip -quiet  [get_ips *]
 generate_target {all} [get_ips *]
 
-source ../source/system.tcl
+source ../../source/system.tcl
 generate_target {synthesis implementation} [get_files ./proj.srcs/sources_1/bd/system/system.bd]
 set_property synth_checkpoint_mode None [get_files ./proj.srcs/sources_1/bd/system/system.bd]
 
-read_verilog -sv [glob ../source/lfsr.v]
-read_verilog -sv [glob ../source/lfsr_generator.v]
-read_verilog -sv [glob ../source/lfsr_checker.v]
-read_verilog -sv [glob ../source/heater.v]
-read_verilog -sv [glob ../source/top.v]
+read_verilog -sv [glob ../../source/lfsr.v]
+read_verilog -sv [glob ../../source/lfsr_generator.v]
+read_verilog -sv [glob ../../source/lfsr_checker.v]
+read_verilog -sv [glob ../../source/heater.v]
+read_verilog -sv [glob ../../source/top.v]
 
-read_xdc ../source/top.xdc
+read_xdc ../../source/top.xdc
 
 close_project
 
