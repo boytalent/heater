@@ -1,7 +1,10 @@
 # Script to compile the FPGA with zynq processor system all the way to bit file.
+close_project -quiet
 set outputDir ./results
 file mkdir $outputDir
 open_project proj.xpr
+
+synth_ip [get_ips *]
 
 synth_design -top artix_top
 write_checkpoint -force $outputDir/post_synth.dcp
@@ -9,6 +12,8 @@ write_checkpoint -force $outputDir/post_synth.dcp
 ## add ila logic analyzer.
 #source add_ila.tcl
 write_debug_probes -force ./results/ila0.ltx
+
+source ../../source/artix_top_late.xdc
 
 opt_design
 

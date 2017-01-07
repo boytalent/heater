@@ -26,36 +26,39 @@ module heater (
     srl32 srl32_5(.CLK(clk), .D(srl_dout[4]), .Q(srl_dout[5]));
 
     // some BRAM delays
-    logic [9:0] count;
-    always_ff @ (posedge clk) if (reset==1) count<=0; else count++;
+    localparam Nbram = 4;
+    logic [Nbram-1:0][9:0] count;
+    genvar i,j;  
+    generate for (i=0;i<Nbram;i++) begin: gen_count
+        always_ff @(posedge clk) count[i]++;
+    end endgenerate
     logic [3:0][31:0] bram_dout;
-    sp_bram sp_bram_0(.clka(clk), .wea(1), .addra(count), .dina(srl_dout[5]),  .douta(bram_dout[0]));
-    sp_bram sp_bram_1(.clka(clk), .wea(1), .addra(count), .dina(bram_dout[0]), .douta(bram_dout[1]));
-    sp_bram sp_bram_2(.clka(clk), .wea(1), .addra(count), .dina(bram_dout[1]), .douta(bram_dout[2]));
-    sp_bram sp_bram_3(.clka(clk), .wea(1), .addra(count), .dina(bram_dout[2]), .douta(bram_dout[3]));
+    sp_bram sp_bram_0(.clka(clk), .wea(1), .addra(count[i]), .dina(srl_dout[5]),  .douta(bram_dout[0]));
+    sp_bram sp_bram_1(.clka(clk), .wea(1), .addra(count[i]), .dina(bram_dout[0]), .douta(bram_dout[1]));
+    sp_bram sp_bram_2(.clka(clk), .wea(1), .addra(count[i]), .dina(bram_dout[1]), .douta(bram_dout[2]));
+    sp_bram sp_bram_3(.clka(clk), .wea(1), .addra(count[i]), .dina(bram_dout[2]), .douta(bram_dout[3]));
 
     // some DSP48 delays
     logic [5:0][47:0] dsp_dout;
     dsp_nop dsp_0(.CLK(clk), .D(0), .C({16'd0, bram_dout[3]}), .P(dsp_dout[0]));
-    dsp_nop dsp_1(.CLK(clk), .D(0), .C({16'd0, dsp_dout[0]}),  .P(dsp_dout[1]));
-    dsp_nop dsp_2(.CLK(clk), .D(0), .C({16'd0, dsp_dout[1]}),  .P(dsp_dout[2]));
-    dsp_nop dsp_3(.CLK(clk), .D(0), .C({16'd0, dsp_dout[2]}),  .P(dsp_dout[3]));
-    dsp_nop dsp_4(.CLK(clk), .D(0), .C({16'd0, dsp_dout[3]}),  .P(dsp_dout[4]));
-    dsp_nop dsp_5(.CLK(clk), .D(0), .C({16'd0, dsp_dout[4]}),  .P(dsp_dout[5]));
+    dsp_nop dsp_1(.CLK(clk), .D(0), .C(dsp_dout[0]), .P(dsp_dout[1]));
+    dsp_nop dsp_2(.CLK(clk), .D(0), .C(dsp_dout[1]), .P(dsp_dout[2]));
+    dsp_nop dsp_3(.CLK(clk), .D(0), .C(dsp_dout[2]), .P(dsp_dout[3]));
+    dsp_nop dsp_4(.CLK(clk), .D(0), .C(dsp_dout[3]), .P(dsp_dout[4]));
+    dsp_nop dsp_5(.CLK(clk), .D(0), .C(dsp_dout[4]), .P(dsp_dout[5]));
 
     // some pipeline registers
     localparam Npipe = 64;
     logic [Npipe-1:0][31:0] ff_dout;
     always_ff @(posedge clk) ff_dout[0] <= dsp_dout[5][31:0];
-    genvar i,j;  
     generate  for (i=1; i<Npipe; i++) begin: gen_reg  
         for (j=0; j<32; j++) begin: gen_ff
-            FDRE FDRE_inst(.Q(ff_dout[i][j]), .C(clk), .CE(1), .R(0), .D(ff_dout[i-1][j]));
+            (* dont_touch="true" *) FDRE FDRE_inst(.Q(ff_dout[i][j]), .C(clk), .CE(1), .R(0), .D(ff_dout[i-1][j]));
         end  
     end  endgenerate 
     
     // an lsfr data checker
-    lfsr_checker lfsr_check_inst(.clk(clk), .reset(err_clear), .dv_in(1), .datain(ff_dout[Npipe-1]), .error(error));
+    lfsr_checker lfsr_check_inst(.clk(clk), .reset(err_clear), .datain(ff_dout[Npipe-1]), .error(error));
 
 endmodule
 

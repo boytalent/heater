@@ -1,7 +1,7 @@
 // constraints for the Avnet Artix 50t board
-set_property PACKAGE_PIN N11 [get_ports clk]
-set_property IOSTANDARD LVCMOS33 [get_ports clk]
-create_clock -period 5.0 [get_ports clk]
+set_property PACKAGE_PIN N11 [get_ports clk_in]
+set_property IOSTANDARD LVCMOS33 [get_ports clk_in]
+create_clock -period 5.0 [get_ports clk_in]
 
 set_property IOSTANDARD LVCMOS33 [get_ports {led[*]}]
 set_property PACKAGE_PIN M1 [get_ports {led[7]}]
