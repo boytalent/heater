@@ -1,3 +1,6 @@
+// This module is designed to run on a MicroZed 7020 board.
+// Thirty two heater channels are instantiated. Individual channels
+// then must be enable from software on the Zynq ARM processor.
 module top (
     inout logic  [14:0]DDR_addr,
     inout logic  [2:0]DDR_ba,

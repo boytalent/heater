@@ -1,3 +1,8 @@
+// This module is designed to be the top level module on an 
+// Avnet Artix 50t eval board.  Heater channels are enabled and
+// errors monitored using a VIO core.  We find that enabling all
+// 16 channels exceeds the current limit of the board and causes 
+// the fpga to reconfigure.
 module artix_top (
     input  logic       clk_in,
     output logic [7:0] led);
