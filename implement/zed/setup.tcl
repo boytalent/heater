@@ -30,7 +30,7 @@ read_verilog -sv [glob ../../source/lfsr_checker.v]
 read_verilog -sv [glob ../../source/heater.v]
 read_verilog -sv [glob ../../source/top.v]
 
-read_xdc ../../source/top.xdc
+#read_xdc ../../source/top.xdc
 
 close_project
 
