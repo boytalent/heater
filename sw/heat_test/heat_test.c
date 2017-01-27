@@ -11,6 +11,39 @@
 #include "proto2_hw.h"
 #include "xspi_l.h"
 
+float read_temp()
+{
+   FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_temp0_raw", "r");
+   char iio_str[256];
+   fscanf(fd_iio, "%s", iio_str);
+   fclose(fd_iio);
+   int iio_int = atoi(iio_str);
+   float temp = iio_int*503.975/4096.0 - 273.15;
+   return(temp);
+}
+
+float read_vccint()
+{
+   FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_voltage0_vccint_raw", "r");
+   char iio_str[256];
+   fscanf(fd_iio, "%s", iio_str);
+   fclose(fd_iio);
+   int iio_int = atoi(iio_str);
+   float vccint = iio_int*3.0/4096.0;
+   return(vccint);
+}
+
+float read_vccaux()
+{
+   FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_voltage1_vccaux_raw", "r");
+   char iio_str[256];
+   fscanf(fd_iio, "%s", iio_str);
+   fclose(fd_iio);
+   int iio_int = atoi(iio_str);
+   float vccaux = iio_int*3.0/4096.0;
+   return(vccaux);
+}
+
 int main(int argc,char** argv)
 {
     void* pcie_addr;
@@ -36,28 +69,18 @@ int main(int argc,char** argv)
     read_val = read_reg(pcie_addr,GPIO1_DATA2);
     printf("errors = 0x%08X\n", read_val);
 
-    read_val = read_reg(pcie_addr,XADC_VCCINT);
-    printf("VCCint = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
-
-    read_val = read_reg(pcie_addr,XADC_VCCAUX);
-    printf("VCCaux = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
-
-    read_val = read_reg(pcie_addr,XADC_VCCBRAM);
-    printf("VCCbram = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
-
-    read_val = read_reg(pcie_addr,XADC_VCCPINT);
-    printf("VCCpint = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
-
-    read_val = read_reg(pcie_addr,XADC_VCCPAUX);
-    printf("VCCpaux = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
-
-    read_val = read_reg(pcie_addr,XADC_VCCODDR);
-    printf("VCCoddr = 0x%08X, %f Volts\n", read_val, read_val*3.0/(16.0*4096.0));
-
-    read_val = read_reg(pcie_addr,XADC_TEMP);
-    printf("temperature = 0x%08X, %f degrees C\n", read_val, ((0xffff&read_val)*503.975/(16.0*4096.0))-273.15);
-
     munmap(pcie_addr,pcie_bar0_size);
+
+   float temp = read_temp();
+   printf("temp = %f C;\n", temp);
+
+   float vccint = read_vccint();
+   printf("vccint = %f Volts;\n", vccint);
+
+   float vccaux = read_vccaux();
+   printf("vccaux = %f Volts;\n", vccaux);
 
     return 0;
 }
+
+
