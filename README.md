@@ -18,6 +18,6 @@ Build instructions are in the implement folder.
 ## results
 This design was tested on a MicroZed 7020 board and an Avnet Artix 50t board.  Temperatures ran very high
 on the MicroZed so I switched to the Artix board. Eventually, the current limit of the Artix board
-was exceeded causing board reboot. :-)
+was exceeded causing board reboot.
 
-Use with caution.
+Use with caution. :smiling_imp:
