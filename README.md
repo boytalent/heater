@@ -16,8 +16,6 @@ Artix_top.v is the top level source for the Artix-50 version of the design. A VI
 
 Build instructions are in the implement folder.
 ## results
-This design was tested on a MicroZed 7020 board and an Avnet Artix 50t board.  Temperatures ran very high
-on the MicroZed so I switched to the Artix board. Eventually, the current limit of the Artix board
-was exceeded causing board reboot.
+This design was tested on a MicroZed 7020 board and an Avnet Artix 50t board.  I was able to achieve very high temperatures on the MicroZed. The MicroZed is my most useful board so I did not want to damage it. That's why I switched to the Artix board. Eventually, a die temperature greater than 100C was achieved and the current limit of the Artix board was exceeded causing board reboot.
 
 Use with caution. :smiling_imp:
