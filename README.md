@@ -6,8 +6,8 @@ _**https://github.com/hdlguy/heater.git**_
 There are many reasons for wanting a design that does nothing other than toggle nodes to burn power.
 1. You can test the current limits of your power distribution network.
 1. You can test the cooling capability of your board.
-1. You can verify the results of FPGA power estimation tools.
-2. You can have a little fun.
+1. You can verify the results of FPGA power estimation tools. This type of design has the advantage that you know the toggle rate of all the data. Power tools need that number to estimate power but it is difficult to guess. This artificial design produces data with LFSR so the toggle rate is always 50%.
+1. You can have a little fun.
 
 ## design
 This design is written in Systemverilog.  It provides a parameterized number of channels of power burning pipelines. Also, each channel is parameterized with respect to the number of LUT, DSP48 and BRAM that are used.
