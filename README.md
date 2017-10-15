@@ -1,5 +1,5 @@
 # heater
-An FPGA "heater" design that uses LFSR data to toggle logic for the purpose of stressing the power supply.
+An FPGA "heater" design that uses LFSR data to toggle logic for the purpose of dissipating power.
 
 _**https://github.com/hdlguy/heater.git**_
 ## purpose
@@ -10,7 +10,7 @@ There are many reasons for wanting a design that does nothing other than toggle 
 1. You can have a little fun.
 
 ## design
-This design is written in Systemverilog.  It provides a parameterized number of channels of power burning pipelines. Also, each channel is parameterized with respect to the number of LUT, DSP48 and BRAM that are used.
+This design is written in Systemverilog and compiled with Xilinx Vivado tools.  It provides a parameterized number of channels of power burning pipelines. Also, each channel is parameterized with respect to the number of LUT, DSP48 and BRAM that are used.
 
 Artix_top.v is the top level source for the Artix-50 version of the design. A VIO is used to control the number of channels that are enabled so that power consumption can be controlled at run-time.
 
