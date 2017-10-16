@@ -24,6 +24,8 @@ read_verilog -sv [glob ../../source/heater.v]
 read_verilog -sv [glob ../../source/artix_top.v]
 
 read_xdc ../../source/artix_top.xdc
+read_xdc ../..//source/artix_top_late.xdc
+set_property used_in_synthesis false [get_files  ../../source/artix_top_late.xdc]
 
 close_project
 

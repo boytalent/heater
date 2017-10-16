@@ -6,7 +6,7 @@ _**https://github.com/hdlguy/heater.git**_
 There are many reasons for wanting a design that does nothing other than toggle nodes to burn power.
 1. You can test the current limits of your power distribution network.
 1. You can test the cooling capability of your board.
-1. You can verify the results of FPGA power estimation tools. This type of design has the advantage that you know the toggle rate of all the data. Power tools need that number to estimate power but it is difficult to guess. This artificial design produces data with LFSR so the toggle rate is always 50%.
+1. You can verify the results of FPGA power estimation tools. This type of design has the advantage that you know the toggle rate of all the data. Power tools need that number to estimate power but it is difficult to guess. This artificial design produces data with an LFSR so the toggle rate is always 50%.
 1. You can have a little fun.
 
 ## design
@@ -16,6 +16,6 @@ Artix_top.v is the top level source for the Artix-50 version of the design. A VI
 
 Build instructions are in the implement folder.
 ## results
-This design was tested on a MicroZed 7020 board and an Avnet Artix 50t board.  I was able to achieve very high temperatures on the MicroZed. The MicroZed is my most useful board so I did not want to damage it. That's why I switched to the Artix board. Eventually, a die temperature greater than 100C was achieved and the current limit of the Artix board was exceeded causing board reboot.
+This design was tested on a MicroZed 7020 board and an Avnet Artix 50t board.  I was able to achieve very high temperatures on the MicroZed. The MicroZed is my most useful board so I did not want to damage it. That's why I switched to the Artix board. Eventually, a die temperature greater than 100C was achieved and the current limit of the Artix board point of load regulator was exceeded causing the board to reboot.
 
 Use with caution. :smiling_imp:
